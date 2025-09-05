@@ -32,29 +32,41 @@ let xoaNV = (id) => {
     }
 };
 
-let suaNV = (id) => {
-        let index = nvArr.findIndex((nv) => nv.taiKhoan == id);
-        if (index === -1) {
-            return;
-        }
-        
-    let nv = nvArr[index];
-    document.getElementById("tknv").value = nv.taiKhoan;
-    document.getElementById("name").value = nv.hoTen;
-    document.getElementById("email").value = nv.email;
-    document.getElementById("password").value = nv.matKhau;
-    document.getElementById("luongCB").value = nv.luongCoBan;
-    document.getElementById("chucvu").value = nv.chucVu;
-    document.getElementById("gioLam").value = nv.gioLam;
-    document.getElementById('btnCapNhat').addEventListener('click', capNhatNV);
- };
-  let capNhatNV = () => { 
-    let nv = layThongTinTuForm();
-    let index = nvArr.findIndex ((item) => item.taiKhoan == nv.taiKhoan);
-        if (index !== -1) {
-            nvArr[index] = nv;
-            renderDSNV(nvArr);
-            resetForm();
-        }
-     
-  }
+
+let editingIndex = null;
+
+function suaNV(id) {
+  const index = nvArr.findIndex(nv => String(nv.taiKhoan) === String(id));
+  if (index === -1) return;
+
+  editingIndex = index;
+  const nv = nvArr[index];
+
+  document.getElementById("tknv").value = nv.taiKhoan;
+  document.getElementById("name").value = nv.hoten;
+  document.getElementById("email").value = nv.email;
+  document.getElementById("password").value =nv.matKhau;
+  document.getElementById("datepicker").value = nv.ngayLam;
+  document.getElementById("luongCB").value = nv.luongCoBan;
+  document.getElementById("chucvu").value  = nv.chucVu;
+  document.getElementById("gioLam").value  = nv.gioLam;
+
+  if (window.$) $('#myModal').modal('show');
+}
+
+function capNhatNV() {
+  if (editingIndex == null) return;         
+
+  const nvNew = layThongTinTuForm();         
+  nvNew.taiKhoan = nvArr[editingIndex].taiKhoan; 
+
+  nvArr[editingIndex] = nvNew;              
+  localStorage.setItem("DSNV", JSON.stringify(nvArr));  
+  renderDSNV(nvArr);                         
+  editingIndex = null;                        
+  if (window.$) $('#myModal').modal('hide');  
+}
+
+document.getElementById('btnCapNhat').addEventListener('click', capNhatNV);
+
+window.suaNV = suaNV;
